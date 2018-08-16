@@ -1,26 +1,23 @@
 package momanii.hani.supernova_emoji;
 
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
+import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 
-import hani.momanii.supernova_emoji_library.Actions.EmojIconActions;
-import hani.momanii.supernova_emoji_library.Helper.EmojiconEditText;
-import hani.momanii.supernova_emoji_library.Helper.EmojiconTextView;
+import hani.momanii.supernova_emoji_library.EmojiKeyboard;
 
 public class MainActivity extends AppCompatActivity {
-
-    CheckBox mCheckBox;
-    EmojiconEditText emojiconEditText, emojiconEditText2;
-    EmojiconTextView textView;
+    EditText emojiconEditText, emojiconEditText2;
+    TextView textView;
     ImageView emojiButton;
     ImageView submitButton;
-    View rootView;
-    EmojIconActions emojIcon;
+    ViewGroup rootView;
+    EmojiKeyboard emojIcon;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,43 +25,28 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         rootView = findViewById(R.id.root_view);
-        emojiButton = (ImageView) findViewById(R.id.emoji_btn);
-        submitButton = (ImageView) findViewById(R.id.submit_btn);
-        mCheckBox = (CheckBox) findViewById(R.id.use_system_default);
-        emojiconEditText = (EmojiconEditText) findViewById(R.id.emojicon_edit_text);
-        emojiconEditText2 = (EmojiconEditText) findViewById(R.id.emojicon_edit_text2);
-        textView = (EmojiconTextView) findViewById(R.id.textView);
-        emojIcon = new EmojIconActions(this, rootView, emojiconEditText, emojiButton);
-        emojIcon.ShowEmojIcon();
-        emojIcon.setKeyboardListener(new EmojIconActions.KeyboardListener() {
+        emojiButton = findViewById(R.id.emoji_btn);
+        submitButton = findViewById(R.id.submit_btn);
+        emojiconEditText = findViewById(R.id.emojicon_edit_text);
+        emojiconEditText2 = findViewById(R.id.emojicon_edit_text2);
+        textView = findViewById(R.id.textView);
+        emojIcon = new EmojiKeyboard(this, rootView);
+        emojIcon.setKeyboardListener(new EmojiKeyboard.KeyboardListener() {
             @Override
             public void onKeyboardOpen() {
-                Log.e("Keyboard", "open");
+                emojiButton.setImageResource(R.drawable.ic_keyboard_black_24dp);
             }
 
             @Override
             public void onKeyboardClose() {
-                Log.e("Keyboard", "close");
+                emojiButton.setImageResource(R.drawable.ic_insert_emoticon_black_24dp);
             }
         });
+        emojIcon.showEmojiKeyboard(emojiconEditText);
 
-        mCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                emojIcon.setUseSystemEmoji(b);
-                textView.setUseSystemDefault(b);
-            }
-        });
-        emojIcon.addEmojiconEditTextList(emojiconEditText2);
-
-        submitButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String newText = emojiconEditText.getText().toString();
-                textView.setText(newText);
-            }
+        submitButton.setOnClickListener(v -> {
+            String newText = emojiconEditText.getText().toString();
+            textView.setText(newText);
         });
     }
-
-
 }
